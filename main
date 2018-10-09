@@ -1,0 +1,201 @@
+package com.example.a1.allwifi;
+
+import android.net.wifi.ScanResult;
+
+import android.net.wifi.WifiManager;
+
+import android.os.Bundle;
+
+import android.os.Handler;
+
+import android.os.Message;
+
+import android.support.v7.app.AppCompatActivity;
+
+import android.util.Log;
+
+import android.widget.TextView;
+
+import android.widget.Toast;
+
+import com.example.a1.allwifi.R;
+
+import java.util.Date;
+
+import java.util.List;
+
+import java.util.Timer;
+
+import java.util.TimerTask;
+
+public class MainActivity extends AppCompatActivity {
+
+    private static final int COMPLETED = 0;
+
+    private WifiManager wifiManager;
+
+    private TextView textView;
+
+    public StringBuilder scanBuilder;
+
+    List<ScanResult> results;
+
+    StringBuilder list;
+
+    //所需要申请的权限数组
+
+    private static final String[] permissionsArray = new String[]{
+
+            android.Manifest.permission.ACCESS_FINE_LOCATION,
+
+            android.Manifest.permission.ACCESS_COARSE_LOCATION
+
+    };
+
+    //还需申请的权限列表
+
+    private List<String> permissionsList = new java.util.ArrayList<>();
+
+    //申请权限后的返回码
+
+    private static final int REQUEST_CODE_ASK_PERMISSIONS = 1;
+
+    public void check()
+
+    {
+
+        //Log.d("main","hiafhusdgfoushdgohodhg");
+
+        // 显示扫描到的所有wifi信息（不能实时更新）：
+
+        wifiManager = (WifiManager)getApplicationContext().getSystemService(WIFI_SERVICE);
+
+        wifiManager.startScan(); //必须先启动扫描，之后才能检测到变化！！
+
+        scanBuilder= new StringBuilder();
+
+        List<ScanResult> scanResults=wifiManager.getScanResults();
+
+        for (ScanResult scanResult : scanResults) {
+
+            scanBuilder.append("\n设备名："+scanResult.SSID +"\n信号强度："+wifiManager.calculateSignalLevel(scanResult.level,1001)+"\n");
+
+        }
+
+        Log.d("main",scanBuilder.toString());
+
+        Message msg = new Message();
+
+        msg.what = COMPLETED;
+
+        handler.sendMessage(msg);
+
+        //Toast.makeText(getApplicationContext(), "Toast在其他线程中调用显示", Toast.LENGTH_SHORT);
+
+        //textView.setText(scanBuilder.toString());
+
+    }
+
+    private Handler handler = new Handler() {
+
+        @Override
+
+        public void handleMessage(Message msg) {
+
+            if (msg.what == COMPLETED) {
+
+                textView.setText(scanBuilder.toString());
+
+            }
+
+        }
+
+    };
+
+    @Override
+
+    protected void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_main);
+
+        findId();
+
+        checkRequiredPermission(MainActivity.this);
+
+        Timer timer = new Timer();
+
+        timer.schedule(new Task(),new Date(), 100);
+
+    }
+
+    public void findId(){
+
+        textView = (TextView)findViewById(R.id.textView);
+
+    }
+
+    private void checkRequiredPermission(final android.app.Activity activity){
+
+        for (String permission : permissionsArray) {
+
+            if (android.support.v4.content.ContextCompat.checkSelfPermission(activity, permission) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+
+                permissionsList.add(permission);
+
+            }
+
+        }
+
+        if(!permissionsList.isEmpty())
+
+            android.support.v4.app.ActivityCompat.requestPermissions(activity, permissionsList.toArray(new String[permissionsList.size()]), REQUEST_CODE_ASK_PERMISSIONS);
+
+    }
+
+    public void onRequestPermissionsResult(int requestCode,String[] permissions,int[] grantResults) {
+
+        switch (requestCode)
+
+        {
+
+            case REQUEST_CODE_ASK_PERMISSIONS:
+
+                for (int i=0; i<permissions.length; i++)
+
+                {
+
+                    if (grantResults[i] != android.content.pm.PackageManager.PERMISSION_GRANTED)
+
+                    {
+
+                        Toast.makeText(MainActivity.this, "权限被拒绝： "+permissions[i], Toast.LENGTH_SHORT).show();
+
+                    }
+
+                }
+
+                break;
+
+            default:
+
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        }
+
+    }
+
+    class Task extends TimerTask {
+
+        public void run(){
+
+            Log.d("main","hiafhusdgfoushdgohodhg");
+
+            check();
+
+        }
+
+    }
+
+}
