@@ -18,6 +18,7 @@
 
 ## 二、WiFi定位优势
 [其他定位技术](https://www.zhihu.com/question/20485136)
+
 [wifi电子标签](http://app.djkpai.com/87137.shtml)
 - 带宽优势
 - WiFi芯片早已是手机及其他移动设备的标配
