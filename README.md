@@ -2,7 +2,9 @@
 
 ## WIFI列表图片展示
 ![](./Android_wifi_intensity/result.jpg)
-<<<<<<< HEAD
+=======
+## 视频结果
+![](./Android_wifi_intensity/video.gif)
 
 ## 一、定位的需求[背景](https://blog.csdn.net/huawei_eSDK/article/details/50777339)
 
@@ -29,7 +31,5 @@
 - 产业链不成熟导致成本较高
 
 ## 四、
-=======
-## 视频结果
-![](./Android_wifi_intensity/video.gif)
->>>>>>> 1d9454239fdf6f883c181b7a45f1b4a513e20fc7
+
+
